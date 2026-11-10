@@ -22,5 +22,59 @@
 
 python main.py
 
+```
+
+
+
+\## 현재 기능
+
+
+
+\- 영화 제목 자음 퀴즈 프로젝트 시작
+
+\- Python 실행 확인
+
+
+
+\## 파일 구조
+
+
+
+```text
+
+movie-consonant-quiz/
+
+├── main.py
+
+├── README.md
+
+└── .gitignore
+
+```
+
+
+
+\## 데이터 파일
+
+
+
+앞으로 `state.json` 파일에 퀴즈와 최고 점수를 저장할 예정입니다.
+
+\## 파일 구조
+
+
+
+```text
+
+movie-consonant-quiz/
+
+├── main.py
+
+├── README.md
+
+└── .gitignore
+
+
+
 
 
