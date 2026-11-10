@@ -40,40 +40,44 @@ def show_menu():
     print("=" * 40)
 
 
-def get_menu_choice():
+def get_number(prompt, min_value, max_value):
     while True:
-        choice = input("메뉴를 선택하세요: ").strip()
+        value = input(prompt).strip()
 
-        if choice == "":
-            print("입력값이 없습니다. 1부터 5까지 입력하세요.")
-            continue
-
-        try:
-            choice = int(choice)
-        except ValueError:
-            print("숫자만 입력하세요.")
-            continue
-
-        if choice < 1 or choice > 5:
-            print("1부터 5까지의 숫자를 입력하세요.")
-            continue
-
-        return choice
-
-
-def get_answer():
-    while True:
-        user_input = input("정답 번호를 입력하세요 (1-4, q: 나가기): ").strip().lower()
-
-        if user_input == "q":
-            return None
-
-        if user_input == "":
+        if value == "":
             print("입력값이 없습니다.")
             continue
 
         try:
-            answer = int(user_input)
+            number = int(value)
+        except ValueError:
+            print("숫자만 입력하세요.")
+            continue
+
+        if number < min_value or number > max_value:
+            print(f"{min_value}부터 {max_value}까지 입력하세요.")
+            continue
+
+        return number
+
+
+def get_menu_choice():
+    return get_number("메뉴를 선택하세요: ", 1, 5)
+
+
+def get_answer():
+    while True:
+        value = input("정답 번호를 입력하세요 (1-4, q: 나가기): ").strip().lower()
+
+        if value == "q":
+            return None
+
+        if value == "":
+            print("입력값이 없습니다.")
+            continue
+
+        try:
+            answer = int(value)
         except ValueError:
             print("1부터 4까지의 숫자 또는 q를 입력하세요.")
             continue
@@ -85,10 +89,21 @@ def get_answer():
         return answer
 
 
+def get_text(prompt):
+    while True:
+        text = input(prompt).strip()
+
+        if text == "":
+            print("빈칸으로 입력할 수 없습니다.")
+            continue
+
+        return text
+
+
 def play_quiz(quizzes):
     if len(quizzes) == 0:
         print("등록된 퀴즈가 없습니다.")
-        return
+        return None
 
     score = 0
 
@@ -101,7 +116,7 @@ def play_quiz(quizzes):
 
         if user_answer is None:
             print("퀴즈를 종료하고 메뉴로 돌아갑니다.")
-            return
+            return None
 
         if quiz.is_correct(user_answer):
             print("정답입니다!")
@@ -115,6 +130,28 @@ def play_quiz(quizzes):
     print(f"결과: {len(quizzes)}문제 중 {score}문제 정답")
     print("=" * 40)
 
+    return score
+
+
+def add_quiz(quizzes):
+    print()
+    print("새로운 퀴즈를 추가합니다.")
+
+    question = get_text("자음을 입력하세요: ")
+
+    choices = []
+
+    for number in range(1, 5):
+        choice = get_text(f"선택지 {number}를 입력하세요: ")
+        choices.append(choice)
+
+    answer = get_number("정답 번호를 입력하세요 (1-4): ", 1, 4)
+
+    new_quiz = Quiz(question, choices, answer)
+    quizzes.append(new_quiz)
+
+    print("퀴즈가 추가되었습니다!")
+
 
 def show_quiz_list(quizzes):
     print()
@@ -124,8 +161,17 @@ def show_quiz_list(quizzes):
         print(f"{index}. {quiz.question}")
 
 
+def show_score(best_score):
+    print()
+    if best_score == 0:
+        print("아직 퀴즈를 풀지 않았습니다.")
+    else:
+        print(f"최고 정답 수: {best_score}개")
+
+
 def main():
     quizzes = create_default_quizzes()
+    best_score = 0
 
     try:
         while True:
@@ -133,13 +179,21 @@ def main():
             choice = get_menu_choice()
 
             if choice == 1:
-                play_quiz(quizzes)
+                score = play_quiz(quizzes)
+
+                if score is not None and score > best_score:
+                    best_score = score
+                    print("새로운 최고 점수입니다!")
+
             elif choice == 2:
-                print("퀴즈 추가 기능은 다음 단계에서 만듭니다.")
+                add_quiz(quizzes)
+
             elif choice == 3:
                 show_quiz_list(quizzes)
+
             elif choice == 4:
-                print("점수 확인 기능은 다음 단계에서 만듭니다.")
+                show_score(best_score)
+
             elif choice == 5:
                 print("프로그램을 종료합니다.")
                 break
